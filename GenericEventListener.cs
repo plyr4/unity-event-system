@@ -5,6 +5,7 @@ using UnityEngine.Events;
 public class GenericEventOpts
 {
     // add fields here
+    public StateBase _newState;
 }
 
 [Serializable]
