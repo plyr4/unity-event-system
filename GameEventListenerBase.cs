@@ -4,9 +4,12 @@ using UnityEngine.Events;
 
 public class GameEventListenerBase : MonoBehaviour
 {
-    [SerializeField] private bool _listenerRegistered = false;
-    [SerializeField] protected GameEventBase _gameEvent;
-    [SerializeField] protected UnityEvent _unityEvent;
+    [SerializeField]
+    private bool _listenerRegistered = false;
+    [SerializeField]
+    protected GameEventBase _gameEvent;
+    [SerializeField]
+    protected UnityEvent _unityEvent;
     private int _registerRetries = 10;
     private int _registerAttempts = 0;
 
@@ -41,7 +44,9 @@ public class GameEventListenerBase : MonoBehaviour
             {
                 if (_gameEvent._debug && Application.isPlaying)
                 {
-                    Debug.LogWarning($"EventListener: _gameEvent is null: name({gameObject.name}), attempt number ({_registerAttempts}/{_registerRetries})", gameObject);
+                    Debug.LogWarning(
+                        $"EventListener: _gameEvent is null: name({gameObject.name}), attempt number ({_registerAttempts}/{_registerRetries})",
+                        gameObject);
                 }
 
                 // attempt to register again next frame
@@ -61,7 +66,14 @@ public class GameEventListenerBase : MonoBehaviour
 
         if (!_listenerRegistered)
         {
-            Debug.LogWarning($"EventListener: unable to register _gameEvent after ({_registerAttempts}/{_registerRetries}) attempts: name({gameObject.name})", gameObject);
+            Debug.LogWarning(
+                $"EventListener: unable to register _gameEvent after ({_registerAttempts}/{_registerRetries}) attempts: name({gameObject.name})",
+                gameObject);
         }
+    }
+
+    public void RaiseEvent()
+    {
+        _unityEvent?.Invoke();
     }
 }
