@@ -1,13 +1,31 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+
+public class GameEventListener : GameEventListenerContainer<IGameEventOpts>
+{
+}
+
+[Serializable]
+public class GameEventListenerContainer<T> : GameEventListenerBase where T : IGameEventOpts
+{
+    [SerializeField]
+    protected UnityEventGeneric<T> _unityEventGeneric;
+
+    public void RaiseEvent(T opts)
+    {
+        _unityEvent?.Invoke();
+        _unityEventGeneric?.Invoke(opts);
+    }
+}
 
 public class GameEventListenerBase : MonoBehaviour
 {
     [SerializeField]
     private bool _listenerRegistered = false;
     [SerializeField]
-    protected GameEventBase _gameEvent;
+    protected GameEvent _gameEvent;
     [SerializeField]
     protected UnityEvent _unityEvent;
     private int _registerRetries = 10;

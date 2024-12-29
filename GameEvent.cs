@@ -1,7 +1,20 @@
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class GameEventBase : ScriptableObject
+public interface IGameEventOpts
+{
+}
+
+[Serializable]
+public class UnityEventGeneric<T> : UnityEvent<T> where T : IGameEventOpts
+{
+}
+
+[CreateAssetMenu(menuName = "Game Event", fileName = "New Game Event")]
+public class GameEvent : ScriptableObject
 {
     protected ConcurrentDictionary<int, GameEventListenerBase> _listeners =
         new ConcurrentDictionary<int, GameEventListenerBase>();
@@ -22,7 +35,21 @@ public class GameEventBase : ScriptableObject
                     listener.Value.gameObject);
             }
 
-            (listener.Value as GameEventListenerBase).RaiseEvent();
+            listener.Value.RaiseEvent();
+        }
+    }
+
+    public void Invoke(IGameEventOpts opts)
+    {
+        if (_debug && Application.isPlaying)
+            Debug.Log($"GameEvent: Invoked GameEvent listeners: num_listeners({_listeners.Values.Count})");
+
+        foreach (KeyValuePair<int, GameEventListenerBase> listener in _listeners)
+        {
+            if (_debug && Application.isPlaying)
+                Debug.Log($"GameEvent: RaiseEvent GameEvent listener: name({listener.Value.gameObject.name})",
+                    listener.Value.gameObject);
+            (listener.Value as GameEventListener)?.RaiseEvent(opts);
         }
     }
 
